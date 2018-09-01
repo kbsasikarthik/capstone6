@@ -37,7 +37,7 @@ public class AuthorizationController {
 	    } 
 		session.setAttribute("user", user);
 		redir.addFlashAttribute("message", "Logged in.");
-		return new ModelAndView("redirect:/");
+		return new ModelAndView("redirect:/tasks");
 
 	}
 	

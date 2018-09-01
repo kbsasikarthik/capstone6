@@ -14,8 +14,8 @@
 	
 	<p class="message">${ message }</p>
 	
-	<a href ="/tasks" class="btn btn-primary">Tasks</a>
-	
+	<a href="/tasks">Tasks</a>
+		
 
 </body>
 </html>

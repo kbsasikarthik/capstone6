@@ -18,22 +18,25 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<th>ID</th><th>Description</th><th>Due Date</th><th>Is Complete?</th><th>ID</th><th>Description</th>
+				<th>ID</th><th>Description</th><th>Due Date</th><th>Is Complete?</th>
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach var="task" items="${ tasks}">
 				<tr>
 					<td>${task.id }</td>
-					<td><a href="/tasks/${task.id }">${task.description }</a></td>
+					<td>${task.description }</td>
 					<td>${task.duedate }</td>
-					<td>${task.complete }</td>
-					<td>${task.user.email}</td>
+					<td>${task.complete ? 'yes' : 'No'}</td>
+					<td>
+						<a href="/tasks/${ task.id }/edit" class="btn btn-warning btn-sm">Edit</a>
+						<a href="/tasks/${ task.id }/delete" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+					</td>
 				</tr>
 			</c:forEach>
 		</tbody>
 	</table>
-	
+	<a class="btn btn-secondary" href="/tasks/add">Add a Task</a>
 	<a href = "/" class = "btn btn-secondary">Home</a>
 </body>
 </html>

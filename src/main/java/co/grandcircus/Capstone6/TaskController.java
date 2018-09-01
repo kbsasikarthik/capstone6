@@ -1,5 +1,7 @@
 package co.grandcircus.Capstone6;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,9 +32,9 @@ public class TaskController {
 //	}
 	@RequestMapping("/")
 	public ModelAndView home() {
-		return new ModelAndView("index");
-//		mav.addObject("message", "Welcome to Capstone6");
-//		return mav;
+		ModelAndView mav = new ModelAndView("index");
+		mav.addObject("message", "Welcome to Capstone6");
+		return mav;
 	}
 	
 	@RequestMapping("/tasks")
@@ -42,59 +44,58 @@ public class TaskController {
 			return new ModelAndView("redirect:/");
 		}
 		ModelAndView mav =  new ModelAndView("tasks");
-		mav.addObject("tasks", taskDao.findAll());
+		List<Task> tasks = taskDao.findAllByUser(user);
+//		System.out.println(tasks);
+		mav.addObject("tasks", taskDao.findAllByUser(user));
 		return mav;	
 	}
 	
 	@RequestMapping("/tasks/{id}")
 	public ModelAndView showTasks(@PathVariable("id") Task task) {
-		ModelAndView mav = new ModelAndView("show-task");
+		ModelAndView mav = new ModelAndView("taskform");
 		mav.addObject("task", task);
 		return mav;	
 	}
 	
 	@RequestMapping("/tasks/{id}/edit")
-	public ModelAndView editTasks(@PathVariable("id") Task task) {
-		ModelAndView mav = new ModelAndView("task-edit");
-		mav.addObject("task", task);
+	public ModelAndView editTasks(@PathVariable("id") Long id) {
+		ModelAndView mav = new ModelAndView("taskform");
+		mav.addObject("task", taskDao.findById(id));
+		mav.addObject("title", "Edit Task");
 		return mav;	
 	}
 	
 	@RequestMapping(value="/tasks/{id}/edit", method=RequestMethod.POST)
-	public ModelAndView submitEditTasks(@ModelAttribute("id") Task task) {
+	public ModelAndView submitEditTasks(Task task, @PathVariable("id") Long id) {
+		task.setId(id);
 		taskDao.save(task);
-		ModelAndView mav = new ModelAndView("redirect:/tasks/" + task.getId());
+		ModelAndView mav = new ModelAndView("redirect:/tasks/");// + task.getId()
+//		mav.addObject("title", "Edit Task");
 		return mav;	
 	}
 	
 	@RequestMapping("/tasks/add")
 	public ModelAndView addTasks() {
-		ModelAndView mav = new ModelAndView("task-add");
+		ModelAndView mav = new ModelAndView("taskform");
+		mav.addObject("title", "Add Task");
 		return mav;	
 	}
 	
-	@RequestMapping(value="/tasks/submitadd", method=RequestMethod.POST)
+	@RequestMapping(value="/tasks/add", method=RequestMethod.POST)
 	public ModelAndView submitAddTasks(Task task) {
 		taskDao.save(task);
-		ModelAndView mav = new ModelAndView("redirect:/tasks");
-		return mav;	
+		return new ModelAndView("redirect:/tasks");
+//		return mav;	
 	}
 	
 	@RequestMapping("/tasks/{id}/delete")
-	public ModelAndView editTasks(@PathVariable("id") Long id) {
+	public ModelAndView deleteTasks(@PathVariable("id") Long id) {
 		taskDao.deleteById(id);
 		ModelAndView mav = new ModelAndView("redirect:/tasks");
 		return mav;	
 	}
 	
-	@RequestMapping("/tasks/{id}/remove-user")
-	public ModelAndView removeUser(@PathVariable("id") Long taskid, @RequestParam("id") User user) {
-		user.setTasks(null);
-		userDao.save(user);
-		ModelAndView mav = new ModelAndView("redirect:/tasks" + taskid );
-		return mav;	
-	}
-	
+
 	
 	
 
