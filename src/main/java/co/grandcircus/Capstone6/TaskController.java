@@ -44,45 +44,49 @@ public class TaskController {
 			return new ModelAndView("redirect:/");
 		}
 		ModelAndView mav =  new ModelAndView("tasks");
-		List<Task> tasks = taskDao.findAllByUser(user);
+//		List<Task> tasks = taskDao.findAllByUser(user);
 //		System.out.println(tasks);
 		mav.addObject("tasks", taskDao.findAllByUser(user));
 		return mav;	
 	}
 	
 	@RequestMapping("/tasks/{id}")
-	public ModelAndView showTasks(@PathVariable("id") Task task) {
+	public ModelAndView showTasks(@SessionAttribute(name="user", required=false)User user,@PathVariable("id") Task task) {
 		ModelAndView mav = new ModelAndView("taskform");
 		mav.addObject("task", task);
 		return mav;	
 	}
 	
 	@RequestMapping("/tasks/{id}/edit")
-	public ModelAndView editTasks(@PathVariable("id") Long id) {
+	public ModelAndView editTasks(@SessionAttribute(name="user", required=false)User user, @PathVariable("id") Long id) {
 		ModelAndView mav = new ModelAndView("taskform");
-		mav.addObject("task", taskDao.findById(id));
+		mav.addObject("task", taskDao.findById(id).get());
 		mav.addObject("title", "Edit Task");
 		return mav;	
 	}
 	
 	@RequestMapping(value="/tasks/{id}/edit", method=RequestMethod.POST)
-	public ModelAndView submitEditTasks(Task task, @PathVariable("id") Long id) {
-		task.setId(id);
+	public ModelAndView submitEditTasks(@SessionAttribute(name="user", required=false)User user,Task task, @PathVariable("id") Long id) {
+//		task.setId(id);
+//		task.getUser().setId(id);
+		task.setUser(user);
 		taskDao.save(task);
-		ModelAndView mav = new ModelAndView("redirect:/tasks/");// + task.getId()
+		ModelAndView mav = new ModelAndView("redirect:/tasks/" );//+ task.getId());
 //		mav.addObject("title", "Edit Task");
 		return mav;	
 	}
 	
 	@RequestMapping("/tasks/add")
-	public ModelAndView addTasks() {
+	public ModelAndView addTasks(@SessionAttribute(name="user", required=false)User user) {
 		ModelAndView mav = new ModelAndView("taskform");
+//		mav.addObject("user", user.getId());
 		mav.addObject("title", "Add Task");
 		return mav;	
 	}
 	
 	@RequestMapping(value="/tasks/add", method=RequestMethod.POST)
-	public ModelAndView submitAddTasks(Task task) {
+	public ModelAndView submitAddTasks(Task task, @SessionAttribute(name="user", required=false)User user) {
+		task.setUser(user);
 		taskDao.save(task);
 		return new ModelAndView("redirect:/tasks");
 //		return mav;	
